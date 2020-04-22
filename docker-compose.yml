@@ -1,0 +1,60 @@
+version: '3'
+
+services:
+  anpm-php-fpm:
+    build:
+      context: ./php-fpm
+    volumes:
+      - ../src:/var/www
+      - ./freetds.conf:/etc/freetds/freetds.conf
+    links:
+      - database-anpm
+
+  anpm-php-cli:
+    build:
+      context: ./php-cli
+    volumes:
+      - ../src:/var/www
+      - ./freetds.conf:/etc/freetds/freetds.conf
+    stdin_open: true
+    tty: true
+    links:
+      - database-anpm
+
+  anpm-apache:
+    build:
+      context: ./apache
+    volumes:
+      - ../src:/var/www
+      - ./apache/httpd.conf:/usr/local/apache2/conf/httpd.conf
+    depends_on:
+      - anpm-php-fpm
+
+  anpm-nginx:
+    build:
+      context: ./nginx
+    ports:
+      - 80:80
+      - 443:443
+    environment:
+      - VIRTUAL_HOST=site.local
+    volumes:
+      - ../src:/var/www
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/sites/:/etc/nginx/sites-available
+      - ./nginx/conf.d/:/etc/nginx/conf.d
+    depends_on:
+      - anpm-apache
+
+  database-anpm:
+    build:
+      context: ./database
+    environment:
+      - MYSQL_DATABASE=db_anpm
+      - MYSQL_USER=db_anpm
+      - MYSQL_PASSWORD=db_password
+      - MYSQL_ROOT_PASSWORD=docker
+    volumes:
+      - ./dump.sql:/docker-entrypoint-initdb.d/dump.sql
+    ports:
+      - "3306:3306"
