@@ -7,8 +7,11 @@ services:
     volumes:
       - ../src:/var/www
       - ./freetds.conf:/etc/freetds/freetds.conf
+      #- ./php-fpm/hosts:/etc/hosts
     links:
       - database-anpm
+#    ports:
+#      - 9000:9000
 
   anpm-php-cli:
     build:
@@ -31,8 +34,11 @@ services:
       - anpm-php-fpm
 
   anpm-nginx:
+    container_name: site.local #dlya web socket
     build:
       context: ./nginx
+    #domainname: site.local
+    #network_mode: host
     ports:
       - 80:80
       - 443:443
@@ -50,11 +56,13 @@ services:
     build:
       context: ./database
     environment:
+      - MYSQL_ROOT_PASSWORD=docker
       - MYSQL_DATABASE=db_anpm
       - MYSQL_USER=db_anpm
       - MYSQL_PASSWORD=db_password
-      - MYSQL_ROOT_PASSWORD=docker
     volumes:
+      - ./database/conf/my.cnf:/etc/mysql/my.cnf
       - ./dump.sql:/docker-entrypoint-initdb.d/dump.sql
+      #- ./database/src:/var/www
     ports:
       - "3306:3306"

@@ -8,6 +8,7 @@ RUN apt-get update && apt-get install -y \
         libpng-dev \
         libjpeg-dev \
         libfreetype6-dev \
+        iputils-ping \
 	&& docker-php-ext-configure zip --with-libzip \
 	&& docker-php-ext-install zip \
 	&& docker-php-ext-install mysqli \

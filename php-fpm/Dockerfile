@@ -14,6 +14,7 @@ RUN apt-get update \
     php7.4-imagick \
     php7.4-opcache \
     php7.4-zip \
+    iputils-ping \
     php-pear php-dev libmcrypt-dev gcc make autoconf libc-dev pkg-config \
     && pecl install mcrypt-1.0.3 \
     && apt-get clean; rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
@@ -21,6 +22,7 @@ RUN apt-get update \
 
 COPY ./conf.d/php.ini /etc/php/7.4/fpm/conf.d/90-php.ini
 COPY ./conf.d/php.ini /etc/php/7.4/cli/conf.d/90-php.ini
+COPY conf.d/docker.ini $PHP_INI_DIR/conf.d/
 #ADD ./php.ini /etc/php/7.4/fpm/conf.d/90-php.ini
 #ADD ./php.ini /etc/php/7.4/cli/conf.d/90-php.ini
 
