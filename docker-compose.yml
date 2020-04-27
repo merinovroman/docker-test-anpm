@@ -7,6 +7,7 @@ services:
     volumes:
       - ../src:/var/www
       - ./freetds.conf:/etc/freetds/freetds.conf
+      - ./php-fpm/conf.d/php-fpm.d/www.conf:/usr/local/etc/php-fpm.d/www.conf
       #- ./php-fpm/hosts:/etc/hosts
     links:
       - database-anpm
@@ -41,7 +42,7 @@ services:
     #network_mode: host
     ports:
       - 80:80
-      - 443:443
+#      - 443:443
     environment:
       - VIRTUAL_HOST=site.local
     volumes:
